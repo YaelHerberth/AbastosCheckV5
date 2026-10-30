@@ -28,6 +28,31 @@ class UsuariosModel extends ActiveRecord
     }
 
 
+    /** Tabla del admin: búsqueda, orden y paginación en el servidor (ver Listado) */
+    public static function listadoAdmin(): Listado
+    {
+        $listado = new Listado([
+            'id' => 'id',
+            'nombre' => 'username_usuario',
+            'correo' => 'email_usuario',
+            'rol' => 'rol',
+        ], 'id');
+
+        return $listado->cargar(
+            self::$db,
+            'SELECT *',
+            'FROM usuarios',
+            ['username_usuario', 'email_usuario'],
+            'id',
+            [], '', [], '',
+            function ($fila) {
+                $usuario = static::crearObjeto($fila);
+                $usuario->password_usuario = ''; // el hash no se necesita en la vista
+                return $usuario;
+            }
+        );
+    }
+
     public function validar()
     {
         if (!$this->username_usuario) {

@@ -9,6 +9,8 @@ class DepartamentosModel extends ActiveRecord
     public $id;
     public $nombre_departamento;
     public $imagen_departamento;
+    // Solo lectura: cuántos productos tiene (lo llena listadoAdmin)
+    public $productos = 0;
 
     public function __construct($args = [])
     {
@@ -16,6 +18,31 @@ class DepartamentosModel extends ActiveRecord
         $this->nombre_departamento = $args['nombre_departamento'] ?? '';
         $this->imagen_departamento = $args['imagen_departamento'] ?? '';
     }
+    /** Tabla del admin: búsqueda, orden y paginación en el servidor (ver Listado) */
+    public static function listadoAdmin(): Listado
+    {
+        $listado = new Listado([
+            'id' => 'd.id',
+            'nombre' => 'd.nombre_departamento',
+            'productos' => 'productos',
+        ], 'id');
+
+        return $listado->cargar(
+            self::$db,
+            'SELECT d.*, COUNT(p.id) AS productos',
+            'FROM departamentos AS d LEFT JOIN productos AS p ON p.id_departamento = d.id',
+            ['d.nombre_departamento'],
+            'd.id',
+            [], '', [],
+            'GROUP BY d.id',
+            function ($fila) {
+                $departamento = static::crearObjeto($fila);
+                $departamento->productos = (int) $fila['productos'];
+                return $departamento;
+            }
+        );
+    }
+
     public function validar()
     {
         if (!$this->nombre_departamento) {

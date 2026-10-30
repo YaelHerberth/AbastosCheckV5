@@ -9,35 +9,44 @@
 
     <!-- Filtro por estado -->
     <div class="d-flex flex-wrap gap-2 my-3">
-        <a href="/admin/pedidos" class="btn btn-sm <?= $estadoActual === null ? 'btn-dark' : 'btn-outline-dark' ?>">
+        <a href="<?= s($listado->url(['estado' => '', 'pagina' => 1])) ?>" class="btn btn-sm <?= $estadoActual === null ? 'btn-dark' : 'btn-outline-dark' ?>">
             Todos <span class="badge text-bg-light"><?= array_sum($conteo) ?></span>
         </a>
         <?php foreach ($conteo as $estado => $total) : ?>
-            <a href="/admin/pedidos?estado=<?= s($estado) ?>"
+            <a href="<?= s($listado->url(['estado' => $estado, 'pagina' => 1])) ?>"
                 class="btn btn-sm text-capitalize <?= $estadoActual === $estado ? 'btn-' . PedidoModel::colorEstado($estado) : 'btn-outline-' . PedidoModel::colorEstado($estado) ?>">
                 <?= s($estado) ?> <span class="badge text-bg-light"><?= $total ?></span>
             </a>
         <?php endforeach ?>
     </div>
 
-    <table class="table align-middle" id="tabla">
+    <?php
+    $buscarPlaceholder = 'Buscar por número de pedido, cliente o correo';
+    $nombreRegistros = 'pedidos';
+    include __DIR__ . '/../admin/_buscador.php';
+    ?>
+    <div class="table-responsive">
+    <table class="table align-middle tabla-admin">
         <thead>
             <tr>
-                <th>#</th>
-                <th>Fecha</th>
-                <th>Cliente</th>
-                <th>Entrega</th>
-                <th class="text-center">Piezas</th>
-                <th class="text-end">Total</th>
-                <th>Estado</th>
-                <th></th>
+                <?= thOrden($listado, 'id', '#') ?>
+                <?= thOrden($listado, 'fecha', 'Fecha') ?>
+                <?= thOrden($listado, 'cliente', 'Cliente') ?>
+                <th scope="col">Entrega</th>
+                <?= thOrden($listado, 'piezas', 'Piezas', 'text-center') ?>
+                <?= thOrden($listado, 'total', 'Total', 'text-end') ?>
+                <?= thOrden($listado, 'estado', 'Estado') ?>
+                <th scope="col"><span class="visually-hidden">Acciones</span></th>
             </tr>
         </thead>
         <tbody>
+            <?php if (!$pedidos) : ?>
+                <?php $columnas = 8; include __DIR__ . '/../admin/_sin-resultados.php'; ?>
+            <?php endif ?>
             <?php foreach ($pedidos as $pedido) : ?>
                 <tr>
                     <td><?= (int) $pedido['id'] ?></td>
-                    <td data-order="<?= s($pedido['creado_en']) ?>"><?= s(date('d/m/Y H:i', strtotime($pedido['creado_en']))) ?></td>
+                    <td class="text-nowrap"><?= s(date('d/m/Y H:i', strtotime($pedido['creado_en']))) ?></td>
                     <td>
                         <?= s($pedido['username_usuario']) ?>
                         <small class="d-block text-body-secondary"><?= s($pedido['email_usuario']) ?></small>
@@ -54,13 +63,6 @@
             <?php endforeach ?>
         </tbody>
     </table>
+    </div>
+    <?php include __DIR__ . '/../admin/_paginacion.php'; ?>
 </div>
-
-<script>
-    $(document).ready(function() {
-        $('#tabla').DataTable({
-            order: [[0, 'desc']],
-            language: { emptyTable: 'No hay pedidos', search: 'Buscar:' }
-        });
-    });
-</script>

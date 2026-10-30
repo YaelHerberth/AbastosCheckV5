@@ -11,9 +11,10 @@ class ProductosController
 {
     public static function index(Router $router)
     {
-        $resultado = ProductoModel::allProductos();
+        $listado = ProductoModel::listadoAdmin();
         $router->render('productos/index', [
-            "resultado" => $resultado
+            'listado' => $listado,
+            'resultado' => $listado->filas
         ]);
     }
 

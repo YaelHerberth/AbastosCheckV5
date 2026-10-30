@@ -10,10 +10,11 @@ class UsuariosController
 {
     public static function index(Router $router)
     {
-        $resultado = UsuariosModel::all();
+        $listado = UsuariosModel::listadoAdmin();
 
         $router->render('usuarios/index', [
-            "resultado" => $resultado
+            'listado' => $listado,
+            'resultado' => $listado->filas
         ]);
     }
 

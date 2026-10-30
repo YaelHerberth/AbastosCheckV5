@@ -141,3 +141,19 @@ function iconoDepartamento(?string $nombre): string
 
     return 'bi-shop';
 }
+
+/**
+ * Encabezado de tabla que ordena al hacer clic (tablas del admin con Model\Listado).
+ * Ej.: <?= thOrden($listado, 'nombre', 'Nombre') ?>
+ */
+function thOrden(\Model\Listado $listado, string $columna, string $etiqueta, string $clase = ''): string
+{
+    $activa = $listado->orden === $columna;
+    $icono = !$activa ? 'bi-arrow-down-up opacity-25' : ($listado->dir === 'asc' ? 'bi-sort-up' : 'bi-sort-down');
+    $ariaSort = !$activa ? '' : ' aria-sort="' . ($listado->dir === 'asc' ? 'ascending' : 'descending') . '"';
+    $titulo = 'Ordenar por ' . mb_strtolower($etiqueta, 'UTF-8');
+
+    return '<th scope="col" class="' . s($clase) . '"' . $ariaSort . '>'
+        . '<a href="' . s($listado->urlOrden($columna)) . '" class="th-orden" title="' . s($titulo) . '">'
+        . s($etiqueta) . ' <i class="bi ' . $icono . '" aria-hidden="true"></i></a></th>';
+}

@@ -27,8 +27,11 @@ class PedidosController
             $estado = null;
         }
 
+        $listado = PedidoModel::listadoAdmin($estado);
+
         $router->render('pedidos/index', [
-            'pedidos' => PedidoModel::todos($estado),
+            'listado' => $listado,
+            'pedidos' => $listado->filas,
             'conteo' => PedidoModel::conteoPorEstado(),
             'estadoActual' => $estado
         ]);

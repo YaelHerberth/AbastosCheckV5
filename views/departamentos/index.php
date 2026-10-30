@@ -39,44 +39,48 @@
             </div>
         </div>
     </div>
-    <br>
-    <table class="table" id="tabla">
+    <?php
+    $buscarPlaceholder = 'Buscar por nombre o id';
+    $nombreRegistros = 'departamentos';
+    include __DIR__ . '/../admin/_buscador.php';
+    ?>
+    <div class="table-responsive">
+    <table class="table align-middle tabla-admin">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Nombre</th>
-                <th>Imagen</th>
-                <th>Acciones</th>
+                <?= thOrden($listado, 'id', 'Id') ?>
+                <?= thOrden($listado, 'nombre', 'Nombre') ?>
+                <?= thOrden($listado, 'productos', 'Productos', 'text-center') ?>
+                <th scope="col">Imagen</th>
+                <th scope="col">Acciones</th>
             </tr>
         </thead>
         <tbody>
+            <?php if (!$resultado) : ?>
+                <?php $columnas = 5; include __DIR__ . '/../admin/_sin-resultados.php'; ?>
+            <?php endif ?>
             <?php foreach ($resultado as $departamento) : ?>
                 <tr>
                     <td><?= s($departamento->id) ?></td>
                     <td><?= s($departamento->nombre_departamento) ?></td>
+                    <td class="text-center"><?= (int) $departamento->productos ?></td>
                     <?php if (!$departamento->imagen_departamento) : ?>
                         <td><img class="img-fluid img-thumbnail" style="width: 75px;" src="/build/img/AbastosCheckDefault.png" alt="Sin imagen"></td>
                     <?php else : ?>
                         <td><img class="img-fluid img-thumbnail" style="width: 75px;" src="/build/img/Departamentos/<?= s($departamento->imagen_departamento) ?>" alt="<?= s($departamento->nombre_departamento) ?>"></td>
                     <?php endif ?>
                     <td>
-                        <div class="row">
-                            <div class="col-2">
-                                <a href="/admin/departamentos/actualizar?id=<?= s($departamento->id) ?>" class="btn btn-warning"><i class="bi bi-pen"></i></a>
-                            </div>
-                            <div class="col-2">
-                                <form action="/admin/departamentos/eliminar" method="POST">
-                                    <input type="hidden" name="id" value="<?= s($departamento->id) ?>">
-                                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i></button>
-                                </form>
-                            </div>
-
+                        <div class="d-flex gap-2">
+                            <a href="/admin/departamentos/actualizar?id=<?= s($departamento->id) ?>" class="btn btn-warning" title="Editar" aria-label="Editar"><i class="bi bi-pen"></i></a>
+                            <form action="/admin/departamentos/eliminar" method="POST"> <input type="hidden" name="id" value="<?= s($departamento->id) ?>"> <button type="submit" class="btn btn-danger" title="Eliminar" aria-label="Eliminar"><i class="bi bi-trash"></i></button> </form>
                         </div>
                     </td>
                 </tr>
             <?php endforeach ?>
         </tbody>
     </table>
+    </div>
+    <?php include __DIR__ . '/../admin/_paginacion.php'; ?>
 </div>
 
 <div class="modal fade" id="crear" tabindex="-1" aria-hidden="true">
@@ -101,19 +105,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    $(document).ready(function() {
-        $('#tabla').DataTable({
-            language: {
-                searchBuilder: {
-                    title: 'Buscar'
-                }
-            },
-            "order": [
-                [0, "desc"]
-            ],
-
-        });
-    });
-</script>

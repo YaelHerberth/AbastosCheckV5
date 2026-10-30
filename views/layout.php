@@ -19,10 +19,9 @@ $unidadesCarrito = CarritoModel::totalUnidades();
 $lineasLateral = CarritoModel::detalle();
 $totalLateral = CarritoModel::total($lineasLateral);
 
-// Ruta actual sin /public, para marcar la pestaña activa y saber si es el admin
+// Ruta actual sin /public, para marcar la pestaña activa
 $rutaActual = preg_replace('#^/public(?=/|$)#', '', parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
 $rutaActual = rtrim($rutaActual, '/') ?: '/';
-$esPaginaAdmin = strpos($rutaActual, '/admin') === 0;
 $activa = function (string $ruta) use ($rutaActual): string {
     return ($ruta === '/' ? $rutaActual === '/' : strpos($rutaActual, $ruta) === 0) ? 'activa' : '';
 };
@@ -57,12 +56,6 @@ $activa = function (string $ruta) use ($rutaActual): string {
     <link rel="stylesheet" href="/build/css/app.css">
     <script src="/build/js/app.js"></script>
     <script src="/build/js/bootstrap/bootstrap.bundle.min.js"></script>
-    <?php if ($esPaginaAdmin) : ?>
-        <!-- jQuery y DataTables solo se usan en las tablas del admin -->
-        <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
-        <link href="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.css" rel="stylesheet">
-        <script src="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.js"></script>
-    <?php endif ?>
 </head>
 
 <body class="con-barra-inferior">
@@ -111,7 +104,7 @@ $activa = function (string $ruta) use ($rutaActual): string {
             <form action="/buscar" method="GET" class="col-12 col-md-auto mb-2 mb-md-0 mx-md-2 buscador" role="search">
                 <div class="input-group">
                     <input type="search" name="q" class="form-control" placeholder="Buscar productos…" aria-label="Buscar productos"
-                        value="<?= s($_GET['q'] ?? '') ?>">
+                        value="<?= $rutaActual === '/buscar' ? s($_GET['q'] ?? '') : '' ?>">
                     <button class="btn btn-success" type="submit" aria-label="Buscar"><i class="bi bi-search"></i></button>
                 </div>
             </form>

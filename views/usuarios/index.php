@@ -39,46 +39,52 @@
             </div>
         </div>
     </div>
-    <br>
-    <table class="table" id="tabla">
+    <?php
+    $buscarPlaceholder = 'Buscar por nombre, correo o id';
+    $nombreRegistros = 'usuarios';
+    include __DIR__ . '/../admin/_buscador.php';
+    ?>
+    <div class="table-responsive">
+    <table class="table align-middle tabla-admin">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>Imagen</th>
-                <th>Acciones</th>
+                <?= thOrden($listado, 'id', 'Id') ?>
+                <?= thOrden($listado, 'nombre', 'Nombre') ?>
+                <?= thOrden($listado, 'correo', 'Correo') ?>
+                <?= thOrden($listado, 'rol', 'Rol') ?>
+                <th scope="col">Imagen</th>
+                <th scope="col">Acciones</th>
             </tr>
         </thead>
         <tbody>
+            <?php if (!$resultado) : ?>
+                <?php $columnas = 6; include __DIR__ . '/../admin/_sin-resultados.php'; ?>
+            <?php endif ?>
             <?php foreach ($resultado as $usuarios) : ?>
                 <tr>
                     <td><?= s($usuarios->id) ?></td>
                     <td><?= s($usuarios->username_usuario) ?></td>
                     <td><?= s($usuarios->email_usuario) ?></td>
+                    <td>
+                        <span class="badge <?= $usuarios->rol === 'admin' ? 'text-bg-success' : 'text-bg-secondary' ?> text-capitalize"><?= s($usuarios->rol) ?></span>
+                    </td>
                     <?php if (!$usuarios->imagen_usuario) : ?>
                         <td><img class="img-fluid img-thumbnail" style="width: 75px;" src="/build/img/profile-default.jpg" alt="ProfileImageDefault"></td>
                     <?php else : ?>
                         <td><img class="img-fluid img-thumbnail" style="width: 75px;" src="/build/img/Usuarios/<?= s($usuarios->imagen_usuario) ?>" alt="<?= s($usuarios->username_usuario) ?>"></td>
                     <?php endif ?>
                     <td>
-                        <div class="row">
-                            <div class="col-3">
-                                <a href="/admin/usuarios/actualizar?id=<?= s($usuarios->id) ?>" class="btn btn-warning"><i class="bi bi-pen"></i></a>
-                            </div>
-                            <div class="col-3">
-                                <form action="/admin/usuarios/eliminar" method="POST">
-                                    <input type="hidden" name="id" value="<?= s($usuarios->id) ?>">
-                                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i></button>
-                                </form>
-                            </div>
-
+                        <div class="d-flex gap-2">
+                            <a href="/admin/usuarios/actualizar?id=<?= s($usuarios->id) ?>" class="btn btn-warning" title="Editar" aria-label="Editar"><i class="bi bi-pen"></i></a>
+                            <form action="/admin/usuarios/eliminar" method="POST"> <input type="hidden" name="id" value="<?= s($usuarios->id) ?>"> <button type="submit" class="btn btn-danger" title="Eliminar" aria-label="Eliminar"><i class="bi bi-trash"></i></button> </form>
                         </div>
                     </td>
                 </tr>
             <?php endforeach ?>
         </tbody>
     </table>
+    </div>
+    <?php include __DIR__ . '/../admin/_paginacion.php'; ?>
 </div>
 
 <div class="modal fade" id="crear" tabindex="-1" aria-hidden="true">
@@ -103,19 +109,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    $(document).ready(function() {
-        $('#tabla').DataTable({
-            language: {
-                searchBuilder: {
-                    title: 'Buscar'
-                }
-            },
-            "order": [
-                [0, "desc"]
-            ],
-
-        });
-    });
-</script>

@@ -84,12 +84,28 @@ class ProductoModel extends ActiveRecord
         return $ordenados;
     }
 
-    public static function allProductos(){
-        $query = "SELECT p.*, d.nombre_departamento FROM productos AS p
-        LEFT JOIN departamentos AS d ON p.id_departamento = d.id";
+    /** Tabla del admin: búsqueda, orden y paginación en el servidor (ver Listado) */
+    public static function listadoAdmin(): Listado
+    {
+        $listado = new Listado([
+            'id' => 'p.id',
+            'nombre' => 'p.nombre_producto',
+            'precio' => self::PRECIO_VIGENTE,
+            'stock' => 'p.stock',
+            'departamento' => 'd.nombre_departamento',
+        ], 'id');
 
-        $resultado = self::consultarSQL($query);
-        return $resultado;
+        return $listado->cargar(
+            self::$db,
+            'SELECT p.*, d.nombre_departamento',
+            'FROM productos AS p LEFT JOIN departamentos AS d ON p.id_departamento = d.id',
+            ['p.nombre_producto', 'p.descripcion_producto', 'd.nombre_departamento'],
+            'p.id',
+            [], '', [], '',
+            function ($fila) {
+                return static::crearObjeto($fila);
+            }
+        );
     }
 
     function findProducto($id){

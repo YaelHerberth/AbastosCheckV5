@@ -426,6 +426,28 @@ h1, h2, h3, .h1, .h2, .h3, .h4, .h5 {
 
 form.enviando { opacity: .6; pointer-events: none; }
 
+/* ---------- Tablas del admin (búsqueda, orden y paginación en PHP) ---------- */
+
+.buscador-admin { max-width: 32rem; }
+
+.tabla-admin th { white-space: nowrap; }
+
+.th-orden {
+    color: inherit;
+    text-decoration: none;
+}
+.th-orden:hover,
+.th-orden:focus-visible { color: var(--ac-texto-verde); }
+.th-orden .bi { font-size: .85em; }
+
+.pagination {
+    --bs-pagination-color: var(--ac-texto-verde);
+    --bs-pagination-hover-color: var(--ac-texto-verde);
+    --bs-pagination-focus-color: var(--ac-texto-verde);
+    --bs-pagination-active-bg: var(--ac-verde);
+    --bs-pagination-active-border-color: var(--ac-verde);
+}
+
 /* ---------- Login y registro ---------- */
 
 .formulario-login {

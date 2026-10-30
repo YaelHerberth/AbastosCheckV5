@@ -11,10 +11,11 @@ class DepartamentosController
     public static function index(Router $router)
     {
 
-        $resultado = DepartamentosModel::all();
+        $listado = DepartamentosModel::listadoAdmin();
 
         $router->render('departamentos/index', [
-            'resultado' => $resultado
+            'listado' => $listado,
+            'resultado' => $listado->filas
         ]);
     }
 

@@ -155,26 +155,43 @@ class PedidoModel extends ActiveRecord
         return $consulta->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    /** Todos los pedidos para el admin, opcionalmente filtrados por estado */
-    public static function todos(?string $estado = null): array
+    /**
+     * Pedidos para el admin con búsqueda, orden y paginación en el servidor (ver Listado).
+     * Busca por número de pedido (12 o #12), nombre o correo del cliente.
+     */
+    public static function listadoAdmin(?string $estado = null): Listado
     {
-        $query = 'SELECT p.*, u.username_usuario, u.email_usuario, COALESCE(SUM(d.cantidad), 0) AS piezas
-            FROM pedidos AS p
-            JOIN usuarios AS u ON u.id = p.id_usuario
-            LEFT JOIN pedido_detalle AS d ON d.id_pedido = p.id';
+        $listado = new Listado([
+            'id' => 'p.id',
+            'fecha' => 'p.creado_en',
+            'cliente' => 'u.username_usuario',
+            'piezas' => 'piezas',
+            'total' => 'p.total',
+            'estado' => 'p.estado',
+        ], 'id', 'desc', ['estado' => $estado]);
 
+        $condiciones = [];
+        $tipos = '';
+        $valores = [];
         if ($estado !== null) {
-            $query .= ' WHERE p.estado = ?';
+            $condiciones[] = 'p.estado = ?';
+            $tipos = 's';
+            $valores[] = $estado;
         }
-        $query .= ' GROUP BY p.id ORDER BY p.id DESC';
 
-        $consulta = self::$db->prepare($query);
-        if ($estado !== null) {
-            $consulta->bind_param('s', $estado);
-        }
-        $consulta->execute();
-
-        return $consulta->get_result()->fetch_all(MYSQLI_ASSOC);
+        return $listado->cargar(
+            self::$db,
+            'SELECT p.*, u.username_usuario, u.email_usuario, COALESCE(SUM(d.cantidad), 0) AS piezas',
+            'FROM pedidos AS p
+             JOIN usuarios AS u ON u.id = p.id_usuario
+             LEFT JOIN pedido_detalle AS d ON d.id_pedido = p.id',
+            ['u.username_usuario', 'u.email_usuario'],
+            'p.id',
+            $condiciones,
+            $tipos,
+            $valores,
+            'GROUP BY p.id'
+        );
     }
 
     /** Cuántos pedidos hay en cada estado, para los filtros del admin */
