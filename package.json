@@ -1,0 +1,15 @@
+{
+  "name": "abastoscheckmvc",
+  "version": "1.0.0",
+  "description": "abastoscheck v4",
+  "main": "index.js",
+  "dependencies": {
+    "bootstrap": "^5.3.0",
+    "bootstrap-icons": "^1.10.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Yael Sánchez Herbert",
+  "license": "ISC"
+}

@@ -1,0 +1,21 @@
+{
+    "name": "yaelh/abastos-check-mvc",
+    "description": "AbastosCheck V4",
+    "autoload": {
+        "psr-4": {
+            "Yaelh\\AbastosCheckMvc\\": "src/",
+            "Model\\": "./models",
+            "MVC\\": "./",
+            "Controllers\\": "./controllers"
+        }
+    },
+    "authors": [
+        {
+            "name": "YaelHerbert",
+            "email": "yael.herbert@outlook.com"
+        }
+    ],
+    "require": {
+        "intervention/image": "^2.7"
+    }
+}
